@@ -2,13 +2,20 @@ package com.camdevhub.jiratoolbox.calendar;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
+import com.camdevhub.jiratoolbox.control.MonthField;
+import com.camdevhub.jiratoolbox.control.YearField;
+
+import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -25,62 +32,144 @@ import javafx.scene.text.Font;
 public class CDHCalendar extends VBox {
 
 	private TilePane calendarTilePane;
-	private HBox headerPane;
+	private HBox controlPane;
 	
-	private List<LocalDate> selectedDates;
+	YearField yearField;
+	MonthField monthField;
+
+	private Set<LocalDate> selectedDates;
 
 	private int dayCellWidth;
 	private int dayCellHeight;
+	
+	private Color colorSelection;
+	private Color colorDisabled;
 
 	public CDHCalendar() {
 		super();
 
 		this.dayCellHeight = 40;
 		this.dayCellWidth = 80;
-		
-		this.selectedDates = new LinkedList<>();
+		this.colorSelection = Color.rgb(0, 0, 0, 0.5);
+		this.colorDisabled = Color.rgb(0, 0, 0, 0.7);
 
-		this.headerPane = new HBox();
+		this.selectedDates = new HashSet<>();
+
+		this.controlPane = new HBox();
+		yearField = new YearField();
+		monthField = new MonthField();
+		this.setupControlPane();
 
 		this.calendarTilePane = new TilePane();
 		this.calendarTilePane.setPrefColumns(DayOfWeek.values().length);
 
-		this.refreshCalendar(LocalDate.now());
+		this.refreshCalendar(LocalDate.now().withDayOfMonth(1));
 
-		this.getChildren().add(headerPane);
+		this.getChildren().add(controlPane);
 		this.getChildren().add(calendarTilePane);
 	}
 
-	private void refreshCalendar(LocalDate date) {
-		int month;
-		int year;
-		month = date.getMonthValue();
-		year = date.getYear();
+	private void setupControlPane() {
+		LocalDate date = LocalDate.now();
 
-		this.calendarTilePane.getChildren().addAll(this.generateHeaderTiles());
-		for (int i = 1; i <= date.lengthOfMonth(); ++i) {
-			this.calendarTilePane.getChildren().add(generateDayTile(LocalDate.of(year, month, i)));
-		}
+		yearField.setPrefWidth(100);
+		yearField.setText(Integer.toString(date.getYear()));
 
+		monthField.setPrefWidth(100);
+		monthField.setText(Integer.toString(date.getMonthValue()));
+
+		Button increaseYearButton = new Button("+");
+		Button decreaseYearButton = new Button("-");
+		increaseYearButton.setOnAction(event -> {
+			increaseNumber(yearField);
+			this.refreshCalendar(this.getDateFromTextFields());
+		});
+		decreaseYearButton.setOnAction(event -> {
+			decreaseNumber(yearField);
+			this.refreshCalendar(this.getDateFromTextFields());
+		});
+
+		Button increaseMonthButton = new Button("+");
+		Button decreaseMonthButton = new Button("-");
+		increaseMonthButton.setOnAction(event -> {
+			increaseNumber(monthField);
+			this.refreshCalendar(this.getDateFromTextFields());
+		});
+		decreaseMonthButton.setOnAction(event -> {
+			decreaseNumber(monthField);
+			this.refreshCalendar(this.getDateFromTextFields());
+		});
+		
+		Button clearButton = new Button("Clear");
+		clearButton.setOnAction(event -> {
+			this.selectedDates.clear();
+			this.refreshCalendar(this.getDateFromTextFields());
+		});
+
+		this.setPadding(new Insets(10));
+		this.controlPane.getChildren().addAll(decreaseYearButton, yearField, increaseYearButton, decreaseMonthButton,
+				monthField, increaseMonthButton, clearButton);
+	}
+	
+	private LocalDate getDateFromTextFields() {
+		int year = Integer.parseInt(this.yearField.getText());
+		int month = Integer.parseInt(this.monthField.getText());
+		
+		return LocalDate.of(year, month, 1);
 	}
 
-	private Pane generateDayTile(LocalDate date) {
-		StackPane dayCell = new StackPane();
-		dayCell.setPrefSize(dayCellWidth, dayCellHeight);
-		dayCell.setBorder(new Border(
-				new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+	private void increaseNumber(TextField numberField) {
+		int currentValue = Integer.parseInt(numberField.getText());
+		numberField.setText(String.valueOf(currentValue + 1));
+	}
 
-		Label dayLabel = new Label(date.format(DateTimeFormatter.ofPattern("d")));
-		dayLabel.setFont(new Font(24));
+	private void decreaseNumber(TextField numberField) {
+		int currentValue = Integer.parseInt(numberField.getText());
+		numberField.setText(String.valueOf(currentValue - 1));
+	}
 
-		dayCell.getChildren().add(dayLabel);
-		dayCell.setStyle("-fx-background-color: white");
+	private void refreshCalendar(LocalDate date) {
+		this.calendarTilePane.getChildren().clear();
+		this.calendarTilePane.getChildren().addAll(this.generateHeaderTiles());
+		while(!DayOfWeek.MONDAY.equals(date.getDayOfWeek())){
+			date = date.minusDays(1);
+		}
+		for (int i = 1; i <= 35; ++i) {
+			CDHCalendarDay cellDay = generateDayTile(date);
+			if(selectedDates.contains(date)) {
+				cellDay.addOverlay(colorSelection);
+			}
+			this.calendarTilePane.getChildren().add(cellDay);
+			date = date.plusDays(1);
+		}
+	}
 
-		dayCell.setUserData(date);
-		dayCell.setOnMouseClicked(e -> this.selectedDates.add((LocalDate)dayCell.getUserData()));
+	private CDHCalendarDay generateDayTile(LocalDate date) {
+		CDHCalendarDay dayCell = new CDHCalendarDay(date, dayCellWidth, dayCellHeight);
+		
+		if(this.isWorkingDay(date)) {
+			dayCell.setOnMouseClicked(e -> this.updateSelection(dayCell, dayCell.getDate()));
+		} else {
+			dayCell.addOverlay(colorDisabled);
+		}
 
 		return dayCell;
 	}
+
+	private void updateSelection(CDHCalendarDay dayCell, LocalDate date) {
+		if (selectedDates.contains(date)) {
+            dayCell.removeOverlay();
+            selectedDates.remove(date);
+        } else {
+            dayCell.addOverlay(this.colorSelection);
+            selectedDates.add(date);
+        }
+	}
+    
+    private boolean isWorkingDay(LocalDate date) {
+    	DayOfWeek dayOfWeek = date.getDayOfWeek();
+        return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
+    }
 
 	private List<Pane> generateHeaderTiles() {
 		Locale locale = Locale.getDefault();
@@ -104,24 +193,13 @@ public class CDHCalendar extends VBox {
 
 		return days;
 	}
-	
-	public List<LocalDate> getSelectedDates() {
+
+	public Set<LocalDate> getSelectedDates() {
 		return selectedDates;
 	}
 
-	public int getDayCellWidth() {
-		return dayCellWidth;
+	public void setColorSelection(Color colorSelection) {
+		this.colorSelection = colorSelection;
 	}
-
-	public void setDayCellWidth(int dayCellWidth) {
-		this.dayCellWidth = dayCellWidth;
-	}
-
-	public int getDayCellHeight() {
-		return dayCellHeight;
-	}
-
-	public void setDayCellHeight(int dayCellHeight) {
-		this.dayCellHeight = dayCellHeight;
-	}
+	
 }

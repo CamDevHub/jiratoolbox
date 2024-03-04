@@ -16,7 +16,7 @@
 	fx:id="holidaysPane"
 	fx:controller="com.camdevhub.jiratoolbox.controller.HolidaysController"
 >
-	<Label maxWidth="Infinity" text="Holidays Management" />
+	
 	<CDHCalendar fx:id="calendar">
 	</CDHCalendar>
 	<Button text="Send" onAction="#sendHolidaysToJira"/>
