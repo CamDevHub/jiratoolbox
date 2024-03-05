@@ -12,14 +12,14 @@
 
 		<javafx.version>21.0.2</javafx.version>
 	</properties>
-	
+
 	<repositories>
-        <repository>
-            <id>packages-atlassian</id>
-            <url>https://packages.atlassian.com/maven-public/</url>
-        </repository>
-    </repositories>
-	
+		<repository>
+			<id>atlassian-public</id>
+			<url>https://packages.atlassian.com/maven/repository/public</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -27,10 +27,16 @@
 			<version>1.5.2</version>
 		</dependency>
 
+		<!-- Jira dependencies -->
 		<dependency>
 			<groupId>com.atlassian.jira</groupId>
 			<artifactId>jira-rest-java-client-core</artifactId>
 			<version>5.2.7</version>
+		</dependency>
+		<dependency>
+			<groupId>io.atlassian.fugue</groupId>
+			<artifactId>fugue</artifactId>
+			<version>5.0.0</version>
 		</dependency>
 	</dependencies>
 

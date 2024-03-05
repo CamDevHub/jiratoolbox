@@ -1,57 +1,55 @@
 package com.camdevhub.jiratoolbox.controller;
 
 import java.io.IOException;
-import java.util.EnumMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.camdevhub.jiratoolbox.utils.JFXUtils;
-import com.camdevhub.jiratoolbox.utils.ToolboxMenuItem;
+import com.camdevhub.jiratoolbox.MenuEnum;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 
 public class PrimaryController {
 	private static final Logger logger = LoggerFactory.getLogger(PrimaryController.class);
 
-	private Map<ToolboxMenuItem, Parent> menuItemParent = new EnumMap<>(ToolboxMenuItem.class);
+	private Map<MenuEnum, Parent> parents;
 
 	@FXML
-	private VBox rootPane;
+	private BorderPane rootPane;
 
 	@FXML
 	private HBox menuPane;
+	
+	public PrimaryController(Map<MenuEnum, Parent> parents) {
+		this.parents = parents;
+	}
 
 	@FXML
 	public void initialize() throws IOException {
-		for (ToolboxMenuItem item : ToolboxMenuItem.values()) {
-			String menuName = item.toString();
-			menuItemParent.put(item, JFXUtils.loadFXML(menuName.toLowerCase()));
-
-			Button button = new Button(menuName);
-			button.setFont(new Font(18));
-			button.setOnAction(e -> {
-				loadContentPaneByToolboxMenuItem(item);
-			});
-			HBox.setMargin(button, new Insets(0, 10, 0, 10));
-			this.menuPane.getChildren().add(button);
-		}
+		this.generateMenuButtons();
+		logger.info("Menu initialized");
+		this.loadViewFromMenuEnum(MenuEnum.LOGIN);
 		logger.info("PrimaryController initialized");
 	}
-
-	private void loadContentPaneByToolboxMenuItem(ToolboxMenuItem menuItem) {
-		if (this.rootPane.getChildren().size() > 1) {
-			this.rootPane.getChildren().removeLast();
-		}
-		Parent parent = menuItemParent.get(menuItem);
-		this.rootPane.getChildren().add(parent);
-
+	
+	private void generateMenuButtons() {
+		this.parents.forEach((menuItem, parent) -> {
+			Button button = new Button(menuItem.toString());
+			button.setOnAction(e -> {
+				this.loadViewFromMenuEnum(menuItem);
+			});
+			this.menuPane.getChildren().add(button);
+		});
 	}
+	
+	private void loadViewFromMenuEnum(MenuEnum menu) {
+		this.rootPane.setCenter(this.parents.get(menu));
+		logger.info("Display {} view", menu.toString());
+	}
+	
 }

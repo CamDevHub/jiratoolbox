@@ -14,8 +14,6 @@
 <VBox xmlns="http://javafx.com/javafx"
 	xmlns:fx="http://javafx.com/fxml"
 	fx:id="holidaysPane"
-	fx:controller="com.camdevhub.jiratoolbox.controller.HolidaysController"
-	alignment="CENTER"
 >
 	
 	<CDHCalendar fx:id="calendar" alignment="CENTER" spacing="10" >

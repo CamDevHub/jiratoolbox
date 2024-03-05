@@ -5,15 +5,16 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
 
-<VBox
+<BorderPane
 	xmlns="http://javafx.com/javafx"
 	xmlns:fx="http://javafx.com/fxml"
 	fx:id="rootPane"
-	fx:controller="com.camdevhub.jiratoolbox.controller.PrimaryController"
 >
-	<HBox fx:id="menuPane" alignment="CENTER">
-		<padding>
-        	<Insets top="10" right="20" bottom="10" left="20"/>
-    	</padding>
-	</HBox>
-</VBox>
+	<top>
+		<HBox fx:id="menuPane" alignment="CENTER">
+			<padding>
+	        	<Insets top="10" right="20" bottom="10" left="20"/>
+	    	</padding>
+		</HBox>
+	</top>
+</BorderPane>
