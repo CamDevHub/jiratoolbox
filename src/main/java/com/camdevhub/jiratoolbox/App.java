@@ -29,7 +29,7 @@ public class App extends Application {
 		PrimaryController primaryController = new PrimaryController(parentViews);
 		fxmlPrimaryLoader.setController(primaryController);
 
-		Scene scene = new Scene(fxmlPrimaryLoader.load(), 800, 600);
+		Scene scene = new Scene(fxmlPrimaryLoader.load(), 600, 500);
 		stage.setScene(scene);
 		stage.show();
 
@@ -37,14 +37,15 @@ public class App extends Application {
 
 	private EnumMap<MenuEnum, Parent> loadViews() throws IOException {
 		EnumMap<MenuEnum, Parent> parents = new EnumMap<>(MenuEnum.class);
-
+		CDHJiraClient jiraClient = new CDHJiraClient();
+		
 		FXMLLoader fxmlLoginLoader = JFXUtils.getFXMLLoader("login");
-		LoginController loginController = new LoginController(new CDHJiraClient());
+		LoginController loginController = new LoginController(jiraClient);
 		fxmlLoginLoader.setController(loginController);
 		parents.put(MenuEnum.LOGIN, fxmlLoginLoader.load());
 
 		FXMLLoader fxmlHolidaysLoader = JFXUtils.getFXMLLoader("holidays");
-		HolidaysController holidaysController = new HolidaysController(new CDHJiraClient());
+		HolidaysController holidaysController = new HolidaysController(jiraClient);
 		fxmlHolidaysLoader.setController(holidaysController);
 		parents.put(MenuEnum.HOLIDAYS, fxmlHolidaysLoader.load());
 

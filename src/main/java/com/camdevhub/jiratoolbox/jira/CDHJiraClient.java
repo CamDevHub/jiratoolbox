@@ -2,12 +2,17 @@ package com.camdevhub.jiratoolbox.jira;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.atlassian.jira.rest.client.api.JiraRestClient;
+import com.atlassian.jira.rest.client.api.domain.Issue;
 import com.atlassian.jira.rest.client.api.domain.User;
+import com.atlassian.jira.rest.client.api.domain.input.WorklogInput;
+import com.atlassian.jira.rest.client.api.domain.input.WorklogInputBuilder;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
 
 public class CDHJiraClient {
@@ -52,9 +57,16 @@ public class CDHJiraClient {
 	    return URI.create(this.url);
 	}
 	
-	public void logWorkInIssue(String issueKey) {
-		//Issue issue = this.jiraClient.getIssueClient().getIssue(issueKey).claim();
-		logger.info("Issue {} with id {} fetched", issueKey, issueKey);
+	public void addWorklogInIssue(Issue issue, LocalDate date, int hour) {
+		DateTime startDate = new DateTime(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), 0, 0);
+		
+		WorklogInputBuilder worklogInputBuilder = new WorklogInputBuilder(issue.getWorklogUri());
+		worklogInputBuilder.setMinutesSpent(hour*60);
+		worklogInputBuilder.setStartDate(startDate);
+		WorklogInput worklogInput = worklogInputBuilder.build();
+		
+		this.jiraClient.getIssueClient().addWorklog(issue.getWorklogUri(), worklogInput);
+		logger.info("Worklog of {} hours set the {} added to issue {}", worklogInput.getMinutesSpent()/60, worklogInput.getStartDate(), issue.getKey());
 	}
 	
 	public User fetchUserByName(String username) {
@@ -66,6 +78,10 @@ public class CDHJiraClient {
 			logger.error("username {} malformed", username);
 		}
 		return user;
+	}
+	
+	public Issue fetchIssueByIssueKey(String issueKey) {
+		return this.jiraClient.getIssueClient().getIssue(issueKey).claim();
 	}
 
 }
