@@ -41,5 +41,5 @@ mvn clean package
 4. Run the application:
 
 ```bash
-java -jar target/jira-toolbox-java.jar
+java -jar shade/jiratoolbox.jar
 ```
