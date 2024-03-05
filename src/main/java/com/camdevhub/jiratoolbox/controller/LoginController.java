@@ -18,7 +18,7 @@ public class LoginController {
 	private @FXML PasswordField passwordField;
 	private @FXML TextField urlField;
 
-	private CDHJiraClient jiraClient;
+	private final CDHJiraClient jiraClient;
 
 	public LoginController(CDHJiraClient jiraClient) {
 		this.jiraClient = jiraClient;

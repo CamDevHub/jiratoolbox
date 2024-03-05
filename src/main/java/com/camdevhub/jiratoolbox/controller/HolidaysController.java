@@ -23,7 +23,7 @@ public class HolidaysController {
 	private @FXML TextField issueField;
 	private @FXML ProgressBar worklogProgressBar;
 	
-	private CDHJiraClient jiraClient;
+	private final CDHJiraClient jiraClient;
 
 	public HolidaysController(CDHJiraClient jiraClient) {
 		this.jiraClient = jiraClient;
