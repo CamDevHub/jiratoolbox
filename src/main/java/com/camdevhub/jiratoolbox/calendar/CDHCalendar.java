@@ -13,6 +13,7 @@ import com.camdevhub.jiratoolbox.control.MonthField;
 import com.camdevhub.jiratoolbox.control.YearField;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -33,7 +34,7 @@ public class CDHCalendar extends VBox {
 
 	private TilePane calendarTilePane;
 	private HBox controlPane;
-	
+
 	YearField yearField;
 	MonthField monthField;
 
@@ -41,7 +42,7 @@ public class CDHCalendar extends VBox {
 
 	private int dayCellWidth;
 	private int dayCellHeight;
-	
+
 	private Color colorSelection;
 	private Color colorDisabled;
 
@@ -49,7 +50,7 @@ public class CDHCalendar extends VBox {
 		super();
 
 		this.dayCellHeight = 40;
-		this.dayCellWidth = 80;
+		this.dayCellWidth = 40;
 		this.colorSelection = Color.rgb(0, 0, 0, 0.5);
 		this.colorDisabled = Color.rgb(0, 0, 0, 0.7);
 
@@ -67,6 +68,9 @@ public class CDHCalendar extends VBox {
 
 		this.getChildren().add(controlPane);
 		this.getChildren().add(calendarTilePane);
+
+		this.calendarTilePane.setAlignment(Pos.CENTER);
+		this.setAlignment(Pos.CENTER);
 	}
 
 	private void setupControlPane() {
@@ -99,7 +103,7 @@ public class CDHCalendar extends VBox {
 			decreaseNumber(monthField);
 			this.refreshCalendar(this.getDateFromTextFields());
 		});
-		
+
 		Button clearButton = new Button("Clear");
 		clearButton.setOnAction(event -> {
 			this.selectedDates.clear();
@@ -109,12 +113,14 @@ public class CDHCalendar extends VBox {
 		this.setPadding(new Insets(10));
 		this.controlPane.getChildren().addAll(decreaseYearButton, yearField, increaseYearButton, decreaseMonthButton,
 				monthField, increaseMonthButton, clearButton);
+
+		this.controlPane.setAlignment(Pos.CENTER);
 	}
-	
+
 	private LocalDate getDateFromTextFields() {
 		int year = Integer.parseInt(this.yearField.getText());
 		int month = Integer.parseInt(this.monthField.getText());
-		
+
 		return LocalDate.of(year, month, 1);
 	}
 
@@ -131,12 +137,12 @@ public class CDHCalendar extends VBox {
 	private void refreshCalendar(LocalDate date) {
 		this.calendarTilePane.getChildren().clear();
 		this.calendarTilePane.getChildren().addAll(this.generateHeaderTiles());
-		while(!DayOfWeek.MONDAY.equals(date.getDayOfWeek())){
+		while (!DayOfWeek.MONDAY.equals(date.getDayOfWeek())) {
 			date = date.minusDays(1);
 		}
 		for (int i = 1; i <= 35; ++i) {
 			CDHCalendarDay cellDay = generateDayTile(date);
-			if(selectedDates.contains(date)) {
+			if (selectedDates.contains(date)) {
 				cellDay.addOverlay(colorSelection);
 			}
 			this.calendarTilePane.getChildren().add(cellDay);
@@ -146,8 +152,8 @@ public class CDHCalendar extends VBox {
 
 	private CDHCalendarDay generateDayTile(LocalDate date) {
 		CDHCalendarDay dayCell = new CDHCalendarDay(date, dayCellWidth, dayCellHeight);
-		
-		if(this.isWorkingDay(date)) {
+
+		if (this.isWorkingDay(date)) {
 			dayCell.setOnMouseClicked(e -> this.updateSelection(dayCell, dayCell.getDate()));
 		} else {
 			dayCell.addOverlay(colorDisabled);
@@ -158,18 +164,18 @@ public class CDHCalendar extends VBox {
 
 	private void updateSelection(CDHCalendarDay dayCell, LocalDate date) {
 		if (selectedDates.contains(date)) {
-            dayCell.removeOverlay();
-            selectedDates.remove(date);
-        } else {
-            dayCell.addOverlay(this.colorSelection);
-            selectedDates.add(date);
-        }
+			dayCell.removeOverlay();
+			selectedDates.remove(date);
+		} else {
+			dayCell.addOverlay(this.colorSelection);
+			selectedDates.add(date);
+		}
 	}
-    
-    private boolean isWorkingDay(LocalDate date) {
-    	DayOfWeek dayOfWeek = date.getDayOfWeek();
-        return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
-    }
+
+	private boolean isWorkingDay(LocalDate date) {
+		DayOfWeek dayOfWeek = date.getDayOfWeek();
+		return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
+	}
 
 	private List<Pane> generateHeaderTiles() {
 		Locale locale = Locale.getDefault();
@@ -200,6 +206,31 @@ public class CDHCalendar extends VBox {
 
 	public void setColorSelection(Color colorSelection) {
 		this.colorSelection = colorSelection;
+		this.refreshCalendar(getDateFromTextFields());
 	}
+
+	public void setColorDisabled(Color colorDisabled) {
+		this.colorDisabled = colorDisabled;
+		this.refreshCalendar(getDateFromTextFields());
+	}
+
+	public int getDayCellWidth() {
+		return dayCellWidth;
+	}
+
+	public void setDayCellWidth(int dayCellWidth) {
+		this.dayCellWidth = dayCellWidth;
+		this.refreshCalendar(getDateFromTextFields());
+	}
+
+	public int getDayCellHeight() {
+		return dayCellHeight;
+	}
+
+	public void setDayCellHeight(int dayCellHeight) {
+		this.dayCellHeight = dayCellHeight;
+		this.refreshCalendar(getDateFromTextFields());
+	}
+
 	
 }

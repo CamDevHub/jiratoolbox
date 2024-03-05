@@ -10,12 +10,10 @@
 	xmlns:fx="http://javafx.com/fxml"
 	fx:id="rootPane"
 	fx:controller="com.camdevhub.jiratoolbox.controller.PrimaryController"
-	prefHeight="600.0" prefWidth="1000.0"
 >
 	<HBox fx:id="menuPane" alignment="CENTER">
-		<Button fx:id="holidaysButton" text="Holidays"
-			onAction="#displayHolidaysPane" />
+		<padding>
+        	<Insets top="10" right="20" bottom="10" left="20"/>
+    	</padding>
 	</HBox>
-	<Pane fx:id="contentPane">
-	</Pane>
 </VBox>
