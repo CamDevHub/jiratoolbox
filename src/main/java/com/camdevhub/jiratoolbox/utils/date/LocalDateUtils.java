@@ -1,4 +1,4 @@
-package com.camdevhub.jiratoolbox.utils;
+package com.camdevhub.jiratoolbox.utils.date;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -10,6 +10,6 @@ public class LocalDateUtils {
 	
 	public static boolean isWorkingDay(LocalDate date) {
 		DayOfWeek dayOfWeek = date.getDayOfWeek();
-		return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
+		return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY && !BankHolidays.isBankHolidays(date);
 	}
 }

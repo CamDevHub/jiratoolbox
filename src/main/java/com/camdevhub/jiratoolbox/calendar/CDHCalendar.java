@@ -11,7 +11,7 @@ import java.util.Set;
 
 import com.camdevhub.jiratoolbox.control.MonthField;
 import com.camdevhub.jiratoolbox.control.YearField;
-import com.camdevhub.jiratoolbox.utils.LocalDateUtils;
+import com.camdevhub.jiratoolbox.utils.date.LocalDateUtils;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
