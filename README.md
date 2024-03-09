@@ -4,7 +4,7 @@ The Jira Toolbox Java Application is a desktop application built with Java 21 an
 
 ## Features
 
-- **Holiday Management**: From a magnificent calendar, send your next holidays to your jira instance.
+- **Holiday Management**: From a magnificent calendar, send your next holidays to your jira instance (this is not the right tool for that though).
 - **IDK**: I might remove later
 
 ## Usage
