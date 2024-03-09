@@ -8,8 +8,11 @@ The Jira Toolbox Java Application is a desktop application built with Java 21 an
 - **IDK**: I might remove later
 
 ## Usage
-**Windows Only**
-You can simply run the executable downloaded from the last release. It is a jar wrapped with the JDK21.
+### Prerequisites
+Download the [JDK 21](https://www.oracle.com/fr/java/technologies/downloads/)
+ 
+### Run
+Download the last jar released and start it
 
 ## Build at home
 ### Prerequisites

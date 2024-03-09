@@ -11,6 +11,7 @@ import java.util.Set;
 
 import com.camdevhub.jiratoolbox.control.MonthField;
 import com.camdevhub.jiratoolbox.control.YearField;
+import com.camdevhub.jiratoolbox.utils.LocalDateUtils;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -135,8 +136,8 @@ public class CDHCalendar extends VBox {
 	}
 
 	private void refreshCalendar(LocalDate date) {
-		this.calendarTilePane.getChildren().clear();
-		this.calendarTilePane.getChildren().addAll(generateHeaderTiles());
+		calendarTilePane.getChildren().clear();
+		calendarTilePane.getChildren().addAll(generateHeaderTiles());
 		while (!DayOfWeek.MONDAY.equals(date.getDayOfWeek())) {
 			date = date.minusDays(1);
 		}
@@ -153,7 +154,7 @@ public class CDHCalendar extends VBox {
 	private CDHCalendarDay generateDayTile(LocalDate date) {
 		CDHCalendarDay dayCell = new CDHCalendarDay(date, dayCellWidth, dayCellHeight);
 
-		if (isWorkingDay(date)) {
+		if (LocalDateUtils.isWorkingDay(date)) {
 			dayCell.setOnMouseClicked(e -> updateSelection(dayCell, dayCell.getDate()));
 		} else {
 			dayCell.addOverlay(colorDisabled);
@@ -170,11 +171,6 @@ public class CDHCalendar extends VBox {
 			dayCell.addOverlay(colorSelection);
 			selectedDates.add(date);
 		}
-	}
-
-	private boolean isWorkingDay(LocalDate date) {
-		DayOfWeek dayOfWeek = date.getDayOfWeek();
-		return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
 	}
 
 	private List<Pane> generateHeaderTiles() {
