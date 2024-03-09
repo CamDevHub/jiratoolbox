@@ -1,7 +1,6 @@
 package com.camdevhub.jiratoolbox.jira;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDate;
 
 import org.joda.time.DateTime;
@@ -14,6 +13,7 @@ import com.atlassian.jira.rest.client.api.domain.User;
 import com.atlassian.jira.rest.client.api.domain.input.WorklogInput;
 import com.atlassian.jira.rest.client.api.domain.input.WorklogInputBuilder;
 import com.atlassian.jira.rest.client.internal.async.AsynchronousJiraRestClientFactory;
+import com.camdevhub.jiratoolbox.exception.JiraLoginException;
 
 public class CDHJiraClient {
 	private static final Logger logger = LoggerFactory.getLogger(CDHJiraClient.class);
@@ -69,13 +69,13 @@ public class CDHJiraClient {
 		logger.info("Worklog of {} hours set the {} added to issue {}", worklogInput.getMinutesSpent()/60, worklogInput.getStartDate(), issue.getKey());
 	}
 	
-	public User fetchUserByName(String username) {
+	public User fetchUserByName(String username) throws JiraLoginException {
 		User user = null;
 		try {
 			user = jiraClient.getUserClient().getUser(new URI(getJiraUri() + "rest/api/2/user?username=" + username)).claim();
 			logger.info("User {} fetched", user.getDisplayName());
-		} catch (URISyntaxException e) {
-			logger.error("username {} malformed", username);
+		} catch (Exception e) {
+			throw new JiraLoginException(e.getMessage());
 		}
 		return user;
 	}
