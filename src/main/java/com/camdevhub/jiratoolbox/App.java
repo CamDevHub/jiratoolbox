@@ -3,9 +3,11 @@ package com.camdevhub.jiratoolbox;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.camdevhub.jiratoolbox.controller.HolidaysController;
 import com.camdevhub.jiratoolbox.controller.LoginController;
+import com.camdevhub.jiratoolbox.controller.MenuController;
 import com.camdevhub.jiratoolbox.controller.PrimaryController;
 import com.camdevhub.jiratoolbox.jira.CDHJiraClient;
 import com.camdevhub.jiratoolbox.utils.JFXUtils;
@@ -20,10 +22,12 @@ import javafx.stage.Stage;
  * JavaFX App
  */
 public class App extends Application {
+	
+	private static final String PRIMARY_FXML_NAME = "primary";
 
 	@Override
 	public void start(Stage stage) throws IOException {
-		FXMLLoader fxmlPrimaryLoader = JFXUtils.getFXMLLoader("primary");
+		FXMLLoader fxmlPrimaryLoader = JFXUtils.getFXMLLoader(PRIMARY_FXML_NAME);
 
 		Map<MenuEnum, Parent> parentViews = this.loadViews();
 		PrimaryController primaryController = new PrimaryController(parentViews);
@@ -38,18 +42,18 @@ public class App extends Application {
 	private EnumMap<MenuEnum, Parent> loadViews() throws IOException {
 		EnumMap<MenuEnum, Parent> parents = new EnumMap<>(MenuEnum.class);
 		CDHJiraClient jiraClient = new CDHJiraClient();
-		
-		FXMLLoader fxmlLoginLoader = JFXUtils.getFXMLLoader("login");
-		LoginController loginController = new LoginController(jiraClient);
-		fxmlLoginLoader.setController(loginController);
-		parents.put(MenuEnum.LOGIN, fxmlLoginLoader.load());
 
-		FXMLLoader fxmlHolidaysLoader = JFXUtils.getFXMLLoader("holidays");
-		HolidaysController holidaysController = new HolidaysController(jiraClient);
-		fxmlHolidaysLoader.setController(holidaysController);
-		parents.put(MenuEnum.HOLIDAYS, fxmlHolidaysLoader.load());
+		parents.put(MenuEnum.LOGIN, addView(MenuEnum.LOGIN, jiraClient, LoginController::new));
+		parents.put(MenuEnum.HOLIDAYS, addView(MenuEnum.HOLIDAYS, jiraClient, HolidaysController::new));
 
 		return parents;
+	}
+	
+	private Parent addView(MenuEnum menuEnum, CDHJiraClient jiraClient, Function<CDHJiraClient, MenuController> controllerSupplier) throws IOException {
+		FXMLLoader fxmlLoader = JFXUtils.getFXMLLoader(menuEnum.toString().toLowerCase());
+		MenuController menuController = controllerSupplier.apply(jiraClient);
+		fxmlLoader.setController(menuController);
+		return fxmlLoader.load();
 	}
 
 	public static void main(String[] args) {

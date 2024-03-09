@@ -11,17 +11,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
-public class LoginController {
+public class LoginController extends MenuController{
+
 	private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
 	private @FXML TextField usernameField;
 	private @FXML PasswordField passwordField;
 	private @FXML TextField urlField;
-
-	private final CDHJiraClient jiraClient;
-
+	
 	public LoginController(CDHJiraClient jiraClient) {
-		this.jiraClient = jiraClient;
+		super(jiraClient);
 	}
 
 	@FXML

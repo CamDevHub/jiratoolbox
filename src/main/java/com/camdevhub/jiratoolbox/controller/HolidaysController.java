@@ -14,7 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-public class HolidaysController {
+public class HolidaysController  extends MenuController{
 	private static final Logger logger = LoggerFactory.getLogger(HolidaysController.class);
 
 	private @FXML CDHCalendar  calendar;
@@ -22,11 +22,9 @@ public class HolidaysController {
 	
 	private @FXML TextField issueField;
 	private @FXML ProgressBar worklogProgressBar;
-	
-	private final CDHJiraClient jiraClient;
 
 	public HolidaysController(CDHJiraClient jiraClient) {
-		this.jiraClient = jiraClient;
+		super(jiraClient);
 	}
 
 	@FXML
