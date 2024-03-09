@@ -42,7 +42,7 @@ public class CDHJiraClient {
 	}
 	
 	public boolean isInitialized() {
-		return this.jiraClient != null;
+		return jiraClient != null;
 	}
 	
 	public void initialize(String username, String password, String url) {
@@ -54,7 +54,7 @@ public class CDHJiraClient {
 	}
 	
 	private URI getJiraUri() {
-	    return URI.create(this.url);
+	    return URI.create(url);
 	}
 	
 	public void addWorklogInIssue(Issue issue, LocalDate date, int hour) {
@@ -65,14 +65,14 @@ public class CDHJiraClient {
 		worklogInputBuilder.setStartDate(startDate);
 		WorklogInput worklogInput = worklogInputBuilder.build();
 		
-		this.jiraClient.getIssueClient().addWorklog(issue.getWorklogUri(), worklogInput);
+		jiraClient.getIssueClient().addWorklog(issue.getWorklogUri(), worklogInput);
 		logger.info("Worklog of {} hours set the {} added to issue {}", worklogInput.getMinutesSpent()/60, worklogInput.getStartDate(), issue.getKey());
 	}
 	
 	public User fetchUserByName(String username) {
 		User user = null;
 		try {
-			user = this.jiraClient.getUserClient().getUser(new URI(getJiraUri() + "rest/api/2/user?username=" + username)).claim();
+			user = jiraClient.getUserClient().getUser(new URI(getJiraUri() + "rest/api/2/user?username=" + username)).claim();
 			logger.info("User {} fetched", user.getDisplayName());
 		} catch (URISyntaxException e) {
 			logger.error("username {} malformed", username);
@@ -81,7 +81,7 @@ public class CDHJiraClient {
 	}
 	
 	public Issue fetchIssueByIssueKey(String issueKey) {
-		return this.jiraClient.getIssueClient().getIssue(issueKey).claim();
+		return jiraClient.getIssueClient().getIssue(issueKey).claim();
 	}
 
 }

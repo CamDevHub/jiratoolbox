@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.atlassian.jira.rest.client.api.domain.Issue;
+import com.camdevhub.jiratoolbox.AppPreferences;
 import com.camdevhub.jiratoolbox.calendar.CDHCalendar;
 import com.camdevhub.jiratoolbox.jira.CDHJiraClient;
 import com.camdevhub.jiratoolbox.utils.JFXUtils;
@@ -23,52 +24,52 @@ public class HolidaysController  extends MenuController{
 	private @FXML TextField issueField;
 	private @FXML ProgressBar worklogProgressBar;
 
-	public HolidaysController(CDHJiraClient jiraClient) {
-		super(jiraClient);
+	public HolidaysController(CDHJiraClient jiraClient, AppPreferences prefs) {
+		super(jiraClient, prefs);
 	}
 
 	@FXML
 	public void initialize() {
-		this.calendar.setColorSelection(Color.rgb(255, 165, 0, 0.5));
-		this.calendar.setDayCellWidth(80);
-		this.calendar.setDayCellHeight(40);
+		calendar.setColorSelection(Color.rgb(255, 165, 0, 0.5));
+		calendar.setDayCellWidth(80);
+		calendar.setDayCellHeight(40);
 		logger.info("HolidaysController initialized");
 	}
 
 	@FXML
 	private void sendHolidaysToJira() {
-		if(this.getIssueKey().isBlank()) {
+		if(getIssueKey().isBlank()) {
 			JFXUtils.showErrorPopup("Issue Key Error", "Please, fill the Issue Key field");
 			return;
 		}
-		if(!this.jiraClient.isInitialized()) {
+		if(!jiraClient.isInitialized()) {
 			JFXUtils.showErrorPopup("Connection Error", "Please, login before any operation");
 			return;
 		}
 		
-		Issue issue = this.jiraClient.fetchIssueByIssueKey(getIssueKey());
+		Issue issue = jiraClient.fetchIssueByIssueKey(getIssueKey());
 		
-		int size = this.calendar.getSelectedDates().size();
+		int size = calendar.getSelectedDates().size();
 		double step = 100.0/size;
-		this.resetProgressBar();
-		this.calendar.getSelectedDates().forEach(date -> {
+		resetProgressBar();
+		calendar.getSelectedDates().forEach(date -> {
 			logger.info("Sending Holiday date for {}", date);
-			this.jiraClient.addWorklogInIssue(issue, date, 8);
-			this.updateProgressBar(step);
+			jiraClient.addWorklogInIssue(issue, date, 8);
+			updateProgressBar(step);
 		});
 		JFXUtils.showInformationPopup("Worklog Added", "Worklog added for all the selected dates!");
 	}
 	
 	private String getIssueKey() {
-		return this.issueField.getText();
+		return issueField.getText();
 	}
 	
 	private void updateProgressBar(double step) {
-		this.worklogProgressBar.setProgress(this.worklogProgressBar.getProgress()+step);
+		worklogProgressBar.setProgress(worklogProgressBar.getProgress()+step);
 	}
 	
 	private void resetProgressBar() {
-		this.worklogProgressBar.setProgress(0.);
+		worklogProgressBar.setProgress(0.);
 	}
 
 }

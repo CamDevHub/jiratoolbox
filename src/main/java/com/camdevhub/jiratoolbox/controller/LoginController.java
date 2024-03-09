@@ -4,10 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.atlassian.jira.rest.client.api.domain.User;
+import com.camdevhub.jiratoolbox.AppPreferences;
 import com.camdevhub.jiratoolbox.jira.CDHJiraClient;
 import com.camdevhub.jiratoolbox.utils.JFXUtils;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -18,17 +20,36 @@ public class LoginController extends MenuController{
 	private @FXML TextField usernameField;
 	private @FXML PasswordField passwordField;
 	private @FXML TextField urlField;
+	private @FXML CheckBox rememberCheckbox;
 	
-	public LoginController(CDHJiraClient jiraClient) {
-		super(jiraClient);
+	public LoginController(CDHJiraClient jiraClient, AppPreferences prefs) {
+		super(jiraClient, prefs);
 	}
 
 	@FXML
 	public void initialize() {
+		loadLogin();
 		logger.info("LoginController initialized");
 	}
 
 	@FXML
+	private void processLogin() {
+		saveLogin();
+		loadJiraClient();
+	}
+	
+	private void saveLogin() {
+        prefs.saveUsername(usernameField.getText());
+        prefs.saveUrl(urlField.getText());
+        prefs.saveRemember(Boolean.toString(rememberCheckbox.isSelected()));
+	}
+	
+	private void loadLogin() {
+        usernameField.setText(prefs.loadUsername());
+        urlField.setText(prefs.loadUrl());
+        rememberCheckbox.setSelected(prefs.loadRemember());
+	}
+	
 	private void loadJiraClient() {
 		this.jiraClient.initialize(getUsername(), getPassword(), getUrl());
 		User user = this.jiraClient.fetchUserByName(getUsername());
@@ -39,14 +60,14 @@ public class LoginController extends MenuController{
 	}
 
 	private String getPassword() {
-		return this.passwordField.getText();
+		return passwordField.getText();
 	}
 
 	private String getUsername() {
-		return this.usernameField.getText();
+		return usernameField.getText();
 	}
 
 	private String getUrl() {
-		return this.urlField.getText();
+		return urlField.getText();
 	}
 }

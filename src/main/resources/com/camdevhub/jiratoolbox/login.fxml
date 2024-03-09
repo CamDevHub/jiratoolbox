@@ -7,6 +7,7 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
 
@@ -15,10 +16,11 @@
 	fx:id="loginPane"
 >
 	<Label text="Username:" />
-	<TextField fx:id="usernameField" text=""/>
+	<TextField fx:id="usernameField" text="" />
 	<Label text="Password:" />
-	<PasswordField fx:id="passwordField" text=""/>
+	<PasswordField fx:id="passwordField" text="" />
 	<Label text="URL" />
-	<TextField fx:id="urlField" text=""/>
-	<Button text="Check Connection" onAction="#loadJiraClient"/>
+	<TextField fx:id="urlField" text="" />
+	<Button text="Check Connection" onAction="#processLogin" />
+	<CheckBox fx:id="rememberCheckbox" text="Remember me"/>
 </VBox>

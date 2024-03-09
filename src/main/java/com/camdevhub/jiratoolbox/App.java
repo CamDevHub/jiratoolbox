@@ -3,7 +3,7 @@ package com.camdevhub.jiratoolbox;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import com.camdevhub.jiratoolbox.controller.HolidaysController;
 import com.camdevhub.jiratoolbox.controller.LoginController;
@@ -27,9 +27,11 @@ public class App extends Application {
 
 	@Override
 	public void start(Stage stage) throws IOException {
+		AppPreferences prefs = new AppPreferences();
+		
 		FXMLLoader fxmlPrimaryLoader = JFXUtils.getFXMLLoader(PRIMARY_FXML_NAME);
 
-		Map<MenuEnum, Parent> parentViews = this.loadViews();
+		Map<MenuEnum, Parent> parentViews = this.loadViews(prefs);
 		PrimaryController primaryController = new PrimaryController(parentViews);
 		fxmlPrimaryLoader.setController(primaryController);
 
@@ -39,19 +41,19 @@ public class App extends Application {
 
 	}
 
-	private EnumMap<MenuEnum, Parent> loadViews() throws IOException {
+	private EnumMap<MenuEnum, Parent> loadViews(AppPreferences prefs) throws IOException {
 		EnumMap<MenuEnum, Parent> parents = new EnumMap<>(MenuEnum.class);
 		CDHJiraClient jiraClient = new CDHJiraClient();
 
-		parents.put(MenuEnum.LOGIN, addView(MenuEnum.LOGIN, jiraClient, LoginController::new));
-		parents.put(MenuEnum.HOLIDAYS, addView(MenuEnum.HOLIDAYS, jiraClient, HolidaysController::new));
+		parents.put(MenuEnum.LOGIN, addView(MenuEnum.LOGIN, jiraClient, prefs, LoginController::new));
+		parents.put(MenuEnum.HOLIDAYS, addView(MenuEnum.HOLIDAYS, jiraClient, prefs, HolidaysController::new));
 
 		return parents;
 	}
 	
-	private Parent addView(MenuEnum menuEnum, CDHJiraClient jiraClient, Function<CDHJiraClient, MenuController> controllerSupplier) throws IOException {
+	private Parent addView(MenuEnum menuEnum, CDHJiraClient jiraClient, AppPreferences prefs, BiFunction<CDHJiraClient, AppPreferences, MenuController> controllerSupplier) throws IOException {
 		FXMLLoader fxmlLoader = JFXUtils.getFXMLLoader(menuEnum.toString().toLowerCase());
-		MenuController menuController = controllerSupplier.apply(jiraClient);
+		MenuController menuController = controllerSupplier.apply(jiraClient, prefs);
 		fxmlLoader.setController(menuController);
 		return fxmlLoader.load();
 	}

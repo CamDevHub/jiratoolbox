@@ -86,40 +86,40 @@ public class CDHCalendar extends VBox {
 		Button decreaseYearButton = new Button("-");
 		increaseYearButton.setOnAction(event -> {
 			increaseNumber(yearField);
-			this.refreshCalendar(this.getDateFromTextFields());
+			refreshCalendar(this.getDateFromTextFields());
 		});
 		decreaseYearButton.setOnAction(event -> {
 			decreaseNumber(yearField);
-			this.refreshCalendar(this.getDateFromTextFields());
+			refreshCalendar(this.getDateFromTextFields());
 		});
 
 		Button increaseMonthButton = new Button("+");
 		Button decreaseMonthButton = new Button("-");
 		increaseMonthButton.setOnAction(event -> {
 			increaseNumber(monthField);
-			this.refreshCalendar(this.getDateFromTextFields());
+			refreshCalendar(this.getDateFromTextFields());
 		});
 		decreaseMonthButton.setOnAction(event -> {
 			decreaseNumber(monthField);
-			this.refreshCalendar(this.getDateFromTextFields());
+			refreshCalendar(this.getDateFromTextFields());
 		});
 
 		Button clearButton = new Button("Clear");
 		clearButton.setOnAction(event -> {
-			this.selectedDates.clear();
-			this.refreshCalendar(this.getDateFromTextFields());
+			selectedDates.clear();
+			refreshCalendar(this.getDateFromTextFields());
 		});
 
-		this.setPadding(new Insets(10));
-		this.controlPane.getChildren().addAll(decreaseYearButton, yearField, increaseYearButton, decreaseMonthButton,
+		setPadding(new Insets(10));
+		controlPane.getChildren().addAll(decreaseYearButton, yearField, increaseYearButton, decreaseMonthButton,
 				monthField, increaseMonthButton, clearButton);
 
-		this.controlPane.setAlignment(Pos.CENTER);
+		controlPane.setAlignment(Pos.CENTER);
 	}
 
 	private LocalDate getDateFromTextFields() {
-		int year = Integer.parseInt(this.yearField.getText());
-		int month = Integer.parseInt(this.monthField.getText());
+		int year = Integer.parseInt(yearField.getText());
+		int month = Integer.parseInt(monthField.getText());
 
 		return LocalDate.of(year, month, 1);
 	}
@@ -136,7 +136,7 @@ public class CDHCalendar extends VBox {
 
 	private void refreshCalendar(LocalDate date) {
 		this.calendarTilePane.getChildren().clear();
-		this.calendarTilePane.getChildren().addAll(this.generateHeaderTiles());
+		this.calendarTilePane.getChildren().addAll(generateHeaderTiles());
 		while (!DayOfWeek.MONDAY.equals(date.getDayOfWeek())) {
 			date = date.minusDays(1);
 		}
@@ -145,7 +145,7 @@ public class CDHCalendar extends VBox {
 			if (selectedDates.contains(date)) {
 				cellDay.addOverlay(colorSelection);
 			}
-			this.calendarTilePane.getChildren().add(cellDay);
+			calendarTilePane.getChildren().add(cellDay);
 			date = date.plusDays(1);
 		}
 	}
@@ -153,8 +153,8 @@ public class CDHCalendar extends VBox {
 	private CDHCalendarDay generateDayTile(LocalDate date) {
 		CDHCalendarDay dayCell = new CDHCalendarDay(date, dayCellWidth, dayCellHeight);
 
-		if (this.isWorkingDay(date)) {
-			dayCell.setOnMouseClicked(e -> this.updateSelection(dayCell, dayCell.getDate()));
+		if (isWorkingDay(date)) {
+			dayCell.setOnMouseClicked(e -> updateSelection(dayCell, dayCell.getDate()));
 		} else {
 			dayCell.addOverlay(colorDisabled);
 		}
@@ -167,7 +167,7 @@ public class CDHCalendar extends VBox {
 			dayCell.removeOverlay();
 			selectedDates.remove(date);
 		} else {
-			dayCell.addOverlay(this.colorSelection);
+			dayCell.addOverlay(colorSelection);
 			selectedDates.add(date);
 		}
 	}
